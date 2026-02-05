@@ -8,7 +8,7 @@ st.title("📘 GitHub Discussions Web UI (Cloud)")
 # --- Secrets ---
 TOKEN = st.secrets.get("GITHUB_TOKEN")
 OWNER = "vchinnap"
-REPO = "vchinnap-discussions"
+REPO = "discussions-webui"
 
 if not TOKEN:
     st.error("Missing GITHUB_TOKEN in Streamlit secrets")
