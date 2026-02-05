@@ -1,0 +1,32 @@
+- [#44 AWS SAA](https://github.com/vchinnap/vchinnap-discussions/discussions/44) — vchinnap — comments: 2 — upvotes: 1
+- [#42 EC2](https://github.com/vchinnap/vchinnap-discussions/discussions/42) — vchinnap — comments: 2 — upvotes: 1
+- [#41 Security hub](https://github.com/vchinnap/vchinnap-discussions/discussions/41) — vchinnap — comments: 9 — upvotes: 1
+- [#40 Ansible](https://github.com/vchinnap/vchinnap-discussions/discussions/40) — vchinnap — comments: 1 — upvotes: 1
+- [#39 Gen AI](https://github.com/vchinnap/vchinnap-discussions/discussions/39) — vchinnap — comments: 3 — upvotes: 1
+- [#38 ETL project AWS Managed Workflows for Apache Airflow (MWAA)](https://github.com/vchinnap/vchinnap-discussions/discussions/38) — vchinnap — comments: 0 — upvotes: 1
+- [#37 Apache airflow](https://github.com/vchinnap/vchinnap-discussions/discussions/37) — vchinnap — comments: 2 — upvotes: 1
+- [#36 IAM permissions to filter the resources](https://github.com/vchinnap/vchinnap-discussions/discussions/36) — vchinnap — comments: 0 — upvotes: 1
+- [#34 SSM execution](https://github.com/vchinnap/vchinnap-discussions/discussions/34) — vchinnap — comments: 9 — upvotes: 1
+- [#33 Quantum computing](https://github.com/vchinnap/vchinnap-discussions/discussions/33) — vchinnap — comments: 0 — upvotes: 1
+- [#32 Tokenization](https://github.com/vchinnap/vchinnap-discussions/discussions/32) — vchinnap — comments: 0 — upvotes: 1
+- [#31 Web3](https://github.com/vchinnap/vchinnap-discussions/discussions/31) — vchinnap — comments: 0 — upvotes: 1
+- [#30 What is Eth ?](https://github.com/vchinnap/vchinnap-discussions/discussions/30) — vchinnap — comments: 0 — upvotes: 1
+- [#29 AZURE ARC](https://github.com/vchinnap/vchinnap-discussions/discussions/29) — vchinnap — comments: 0 — upvotes: 1
+- [#28 AWS Centralized backup dashboard KT notes](https://github.com/vchinnap/vchinnap-discussions/discussions/28) — vchinnap — comments: 3 — upvotes: 1
+- [#27 AWS backup Jobs Dashboard](https://github.com/vchinnap/vchinnap-discussions/discussions/27) — vchinnap — comments: 0 — upvotes: 1
+- [#26 AZURE Monitoring & Alerting KT notes](https://github.com/vchinnap/vchinnap-discussions/discussions/26) — vchinnap — comments: 0 — upvotes: 1
+- [#25 Azure Update Manager Implementation Steps](https://github.com/vchinnap/vchinnap-discussions/discussions/25) — vchinnap — comments: 2 — upvotes: 1
+- [#24 CW dashboard query](https://github.com/vchinnap/vchinnap-discussions/discussions/24) — vchinnap — comments: 1 — upvotes: 1
+- [#23 Mid and large cap](https://github.com/vchinnap/vchinnap-discussions/discussions/23) — vchinnap — comments: 0 — upvotes: 1
+- [#22 BTC dominance analysis](https://github.com/vchinnap/vchinnap-discussions/discussions/22) — vchinnap — comments: 0 — upvotes: 1
+- [#21 Patch Azure servers KT session notes](https://github.com/vchinnap/vchinnap-discussions/discussions/21) — vchinnap — comments: 0 — upvotes: 1
+- [#20 Patch Azure Servers (Update Manager)](https://github.com/vchinnap/vchinnap-discussions/discussions/20) — vchinnap — comments: 3 — upvotes: 1
+- [#19 Dynamic Scopes for Patching](https://github.com/vchinnap/vchinnap-discussions/discussions/19) — vchinnap — comments: 1 — upvotes: 1
+- [#17 Permissions needed for Azure](https://github.com/vchinnap/vchinnap-discussions/discussions/17) — vchinnap — comments: 1 — upvotes: 1
+- [#18 Ssm to AWS config](https://github.com/vchinnap/vchinnap-discussions/discussions/18) — vchinnap — comments: 0 — upvotes: 1
+- [#16 check on the installation](https://github.com/vchinnap/vchinnap-discussions/discussions/16) — vchinnap — comments: 4 — upvotes: 1
+- [#15 DEMO: Do something with picture](https://github.com/vchinnap/vchinnap-discussions/discussions/15) — vchinnap — comments: 7 — upvotes: 1
+- [#12 Github Discussions](https://github.com/vchinnap/vchinnap-discussions/discussions/12) — vchinnap — comments: 0 — upvotes: 1
+- [#10 eegeqgqg](https://github.com/vchinnap/vchinnap-discussions/discussions/10) — vchinnap — comments: 6 — upvotes: 1
+- [#9 dbdbawawsdbehhscAV](https://github.com/vchinnap/vchinnap-discussions/discussions/9) — vchinnap — comments: 0 — upvotes: 1
+- [#1 Welcome to Town Sqaure Discussions!](https://github.com/vchinnap/vchinnap-discussions/discussions/1) — vchinnap — comments: 0 — upvotes: 1

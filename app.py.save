@@ -1,0 +1,375 @@
+import json
+import subprocess
+from datetime import datetime
+import streamlit as st
+
+OWNER_DEFAULT = "vchinnap"
+REPO_DEFAULT = "vchinnap-discussions"
+
+# -------------------------
+# GraphQL queries
+# -------------------------
+
+LIST_QUERY = """
+query($owner:String!,$name:String!,$after:String){
+  repository(owner:$owner,name:$name){
+    discussions(first:50, after:$after, orderBy:{field:CREATED_AT, direction:DESC}){
+      pageInfo{hasNextPage endCursor}
+      nodes{
+        number
+        title
+        url
+        author { login }
+        createdAt
+        updatedAt
+        upvoteCount
+        comments { totalCount }
+      }
+    }
+  }
+}
+"""
+
+DETAIL_QUERY = """
+query(
+  $owner:String!
+  $name:String!
+  $number:Int!
+  $after:String
+){
+  repository(owner:$owner,name:$name){
+    discussion(number:$number){
+      number
+      title
+      url
+      author{login}
+      createdAt
+      updatedAt
+      upvoteCount
+      body
+      comments(first:100, after:$after){
+        totalCount
+        pageInfo{
+          hasNextPage
+          endCursor
+        }
+        nodes{
+          author{login}
+          createdAt
+          body
+        }
+      }
+    }
+  }
+}
+"""
+
+# -------------------------
+# Helpers
+# -------------------------
+
+def run_gh_graphql(query: str, variables: dict) -> dict:
+    args = ["gh", "api", "graphql", "--raw-field", f"query={query}"]
+    for k, v in variables.items():
+        args.extend(["-F", f"{k}={v}"])
+    p = subprocess.run(args, capture_output=True, text=True)
+    if p.returncode != 0:
+        raise RuntimeError(p.stderr or p.stdout)
+    return json.loads(p.stdout)
+
+def fmt_dt(s: str) -> str:
+    return datetime.fromisoformat(s.replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M")
+
+# -------------------------
+# Data fetchers
+# -------------------------
+
+@st.cache_data(ttl=120)
+def fetch_all_discussions(owner, repo):
+    cursor = ""
+    out = []
+    while True:
+        vars = {"owner": owner, "name": repo}
+        if cursor:
+            vars["after"] = cursor
+        data = run_gh_graphql(LIST_QUERY, vars)
+        block = data["data"]["repository"]["discussions"]
+        out.extend(block["nodes"])
+        if not block["pageInfo"]["hasNextPage"]:
+            break
+        cursor = block["pageInfo"]["endCursor"]
+    return out
+
+@st.cache_data(ttl=120)
+def fetch_discussion_with_all_comments(owner, repo, number):
+    comments = []
+    cursor = None
+
+    while True:
+        vars = {
+            "owner": owner,
+            "name": repo,
+            "number": number,
+        }
+        if cursor:
+            vars["after"] = cursor
+
+        data = run_gh_graphql(DETAIL_QUERY, vars)
+        d = data["data"]["repository"]["discussion"]
+        c = d["comments"]
+
+        comments.extend(c["nodes"])
+
+        if not c["pageInfo"]["hasNextPage"]:
+            break
+        cursor = c["pageInfo"]["endCursor"]
+
+    d["comments"]["nodes"] = comments
+    return d
+
+# -------------------------
+# UI
+# -------------------------
+
+st.set_page_config(page_title="GitHub Discussions Viewer", layout="wide")
+st.title("GitHub Discussions — Full Viewer (All Comments)")
+
+with st.sidebar:
+    owner = st.text_input("Owner", OWNER_DEFAULT)
+    repo = st.text_input("Repository", REPO_DEFAULT)
+    refresh = st.button("🔄 Refresh")
+
+if refresh:
+    st.cache_data.clear()
+
+discussions = fetch_all_discussions(owner, repo)
+
+st.subheader(f"Discussions ({len(discussions)})")
+
+options = {
+    f"#{d['number']} — {d['title']} (💬 {d['comments']['totalCount']}, 👍 {d['upvoteCount']})": d["number"]
+    for d in discussions
+}
+
+selected = st.selectbox("Select a discussion", options.keys())
+
+if selected:
+    num = options[selected]
+    d = fetch_discussion_with_all_comments(owner, repo, num)
+
+    st.divider()
+    st.markdown(f"## #{d['number']} — {d['title']}")
+    st.markdown(f"**Author:** {d['author']['login']}")
+    st.markdown(f"**Created:** {fmt_dt(d['createdAt'])}")
+    st.markdown(f"**Updated:** {fmt_dt(d['updatedAt'])}")
+    st.markdown(f"**Upvotes:** {d['upvoteCount']}")
+    st.markdown(f"**URL:** {d['url']}")
+
+    st.markdown("### Body")
+    st.markdown(d["body"] or "_No content_")
+
+    st.markdown(f"### Comments ({len(d['comments']['nodes'])})")
+
+    for c in d["comments"]["nodes"]:
+        st.markdown(f"**{c['author']['login']}** — {fmt_dt(c['createdAt'])}")
+        st.markdown(c["body"])
+        st.markdown("---")
+xort json
+import subprocess
+from datetime import datetime
+import streamlit as st
+
+OWNER_DEFAULT = "vchinnap"
+REPO_DEFAULT = "vchinnap-discussions"
+
+LIST_QUERY = r"""
+query($owner:String!,$name:String!,$after:String){
+  repository(owner:$owner,name:$name){
+    discussions(first:50, after:$after, orderBy:{field:CREATED_AT, direction:DESC}){
+      pageInfo{hasNextPage endCursor}
+      nodes{
+        number
+        title
+        url
+        author { login }
+        createdAt
+        updatedAt
+        upvoteCount
+        comments { totalCount }
+      }
+    }
+  }
+}
+"""
+
+DETAIL_QUERY = r"""
+query($owner:String!,$name:String!,$number:Int!){
+  repository(owner:$owner,name:$name){
+    discussion(number:$number){
+      number
+      title
+      url
+      author{login}
+      createdAt
+      updatedAt
+      upvoteCount
+      body
+      comments(first:100){
+        totalCount
+        nodes{
+          author{login}
+          createdAt
+          body
+        }
+      }
+    }
+  }
+}
+"""
+
+def run_gh_graphql(query: str, variables: dict) -> dict:
+    """Run 'gh api graphql' and return parsed JSON."""
+    args = ["gh", "api", "graphql", "--raw-field", f"query={query}"]
+    for k, v in variables.items():
+        args.extend(["-F", f"{k}={v}"])
+
+    p = subprocess.run(args, capture_output=True, text=True)
+    if p.returncode != 0:
+        raise RuntimeError(p.stderr.strip() or p.stdout.strip() or "Unknown gh error")
+    return json.loads(p.stdout)
+
+@st.cache_data(ttl=120)
+def fetch_all_discussions(owner: str, repo: str) -> list[dict]:
+    cursor = ""
+    all_nodes = []
+    while True:
+        variables = {"owner": owner, "name": repo}
+        if cursor:
+            variables["after"] = cursor
+
+        data = run_gh_graphql(LIST_QUERY, variables)
+        discussions = data["data"]["repository"]["discussions"]
+        nodes = discussions["nodes"] or []
+        all_nodes.extend(nodes)
+
+        page = discussions["pageInfo"]
+        if not page["hasNextPage"]:
+            break
+        cursor = page["endCursor"]
+    return all_nodes
+
+@st.cache_data(ttl=120)
+def fetch_discussion_detail(owner: str, repo: str, number: int) -> dict:
+    data = run_gh_graphql(DETAIL_QUERY, {"owner": owner, "name": repo, "number": number})
+    return data["data"]["repository"]["discussion"]
+
+def fmt_dt(s: str) -> str:
+    try:
+        return datetime.fromisoformat(s.replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M")
+    except Exception:
+        return s
+
+st.set_page_config(page_title="GitHub Discussions Viewer", layout="wide")
+st.title("GitHub Discussions Viewer (local)")
+
+with st.sidebar:
+    st.header("Repo")
+    owner = st.text_input("Owner", OWNER_DEFAULT)
+    repo = st.text_input("Repo", REPO_DEFAULT)
+    st.caption("Uses your local `gh` login. If this fails, run: `gh auth status`")
+
+    st.divider()
+    st.header("Filters")
+    q = st.text_input("Search in title", "")
+    min_upvotes = st.slider("Min upvotes", 0, 100, 0)
+    min_comments = st.slider("Min comments", 0, 100, 0)
+
+    refresh = st.button("Refresh now")
+
+try:
+    if refresh:
+        st.cache_data.clear()
+
+    discussions = fetch_all_discussions(owner, repo)
+
+    # Filter
+    filtered = []
+    for d in discussions:
+        title = d.get("title", "")
+        if q and q.lower() not in title.lower():
+            continue
+        if (d.get("upvoteCount") or 0) < min_upvotes:
+            continue
+        if (d.get("comments", {}).get("totalCount") or 0) < min_comments:
+            continue
+        filtered.append(d)
+
+    st.subheader(f"Discussions ({len(filtered)} shown / {len(discussions)} total)")
+    st.caption("Click a row (number) from the selector below to view full body + comments.")
+
+    # Build a selector list
+    options = [
+        f"#{d['number']} — {d['title']} (💬 {d['comments']['totalCount']}, 👍 {d['upvoteCount']})"
+        for d in filtered
+    ]
+
+    col1, col2 = st.columns([2, 3])
+    with col1:
+        selected = st.selectbox("Select a discussion", options=options if options else ["(no results)"])
+        sel_num = None
+        if options:
+            sel_num = int(selected.split("—")[0].strip().lstrip("#"))
+    with col2:
+        st.write("")
+
+    # Show a compact table
+    st.dataframe(
+        [
+            {
+                "Number": d["number"],
+                "Title": d["title"],
+                "Author": d["author"]["login"] if d.get("author") else "",
+                "Created": fmt_dt(d["createdAt"]),
+                "Updated": fmt_dt(d["updatedAt"]),
+                "Upvotes": d["upvoteCount"],
+                "Comments": d["comments"]["totalCount"],
+                "URL": d["url"],
+            }
+            for d in filtered
+        ],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    if sel_num is not None:
+        st.divider()
+        st.subheader(f"Discussion #{sel_num} — Full content")
+
+        detail = fetch_discussion_detail(owner, repo, sel_num)
+
+        st.markdown(f"**Title:** {detail['title']}")
+        st.markdown(f"**Author:** {detail['author']['login'] if detail.get('author') else ''}")
+        st.markdown(f"**Created:** {fmt_dt(detail['createdAt'])} | **Updated:** {fmt_dt(detail['updatedAt'])}")
+        st.markdown(f"**Upvotes:** {detail['upvoteCount']} | **Comments:** {detail['comments']['totalCount']}")
+        st.markdown(f"**URL:** {detail['url']}")
+
+        st.markdown("### Body")
+        st.markdown(detail.get("body") or "_(empty)_")
+
+        st.markdown("### Comments (first 100)")
+        nodes = detail.get("comments", {}).get("nodes") or []
+        if not nodes:
+            st.info("No comments.")
+        else:
+            for c in nodes:
+                who = c["author"]["login"] if c.get("author") else "unknown"
+                when = fmt_dt(c.get("createdAt", ""))
+                st.markdown(f"**{who}** — {when}")
+                st.markdown(c.get("body") or "")
+                st.markdown("---")
+
+except Exception as e:
+    st.error("Could not load discussions.")
+    st.code(str(e))
+    st.info("Quick checks:\n- Run `gh auth status`\n- Ensure Discussions are enabled for the repo\n- Ensure you have access to the repo")
+
