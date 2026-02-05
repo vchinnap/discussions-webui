@@ -183,7 +183,7 @@ with st.sidebar:
 
     mode = st.radio("Mode", ["Single repo", "All repos under owner"], index=0)
 
-    default_repo = st.text_input("Repo (single repo mode)", "vchinnap-discussions")
+    default_repo = st.text_input("Repo (single repo mode)", "discussions-webui")
 
     include_private = st.checkbox("Include private repos (all-repos mode)", value=False)
     exclude_forks = st.checkbox("Exclude forks (all-repos mode)", value=True)
